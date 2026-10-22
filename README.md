@@ -32,7 +32,7 @@ Program constants (tiers, salary cap, vesting years, default purchase date) are 
 
 1. Push this project to a GitHub repository on the `main` branch.
 2. In the repository, go to **Settings → Pages → Build and deployment → Source** and choose **GitHub Actions**.
-3. Each push to `main` runs `.github/workflows/deploy.yml`, which tests, builds (with `BASE_PATH=/<repo-name>/`) and publishes the site to `https://<user>.github.io/<repo-name>/`.
+3. Each push to `main` runs `.github/workflows/deploy.yml`, which tests, builds and publishes the site to `https://<user>.github.io/<repo-name>/`. Asset paths are relative (`base: './'`), so the site keeps working if the repo is renamed.
 
 ## Disclaimer
 

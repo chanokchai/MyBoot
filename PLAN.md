@@ -211,7 +211,7 @@ Boost/
 
 ## 8. Deployment (GitHub Pages via Actions)
 
-1. Set `vite.config.ts` → `base: process.env.BASE_PATH ?? '/'`. The workflow passes `/${{ github.event.repository.name }}/`.
+1. Set `vite.config.ts` → `base: process.env.BASE_PATH ?? './'`. Relative asset paths work under any `/<repo-name>/` sub-path, even after a repo rename.
 2. `.github/workflows/deploy.yml`:
    - Runs on `push` to `main` or manually (`workflow_dispatch`).
    - Job `build`: `actions/checkout` → `actions/setup-node` (Node 22, npm cache) → `npm ci` → `npm test` → `npm run build` → `actions/upload-pages-artifact` (`dist/`).

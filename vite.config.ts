@@ -1,8 +1,8 @@
 import { defineConfig } from 'vite';
 
-// GitHub Pages serves project sites from /<repo-name>/; the deploy workflow sets BASE_PATH.
+// Relative asset paths work under any GitHub Pages sub-path (/<repo-name>/), even after a repo rename.
 export default defineConfig({
-  base: process.env.BASE_PATH ?? '/',
+  base: process.env.BASE_PATH ?? './',
   build: {
     outDir: 'dist',
     sourcemap: false,
