@@ -4,7 +4,7 @@ export interface Tier {
   match: number;
 }
 
-/** Boost contribution tiers in THB (EssilorLuxottica subscription notice, Nov 2026). */
+/** Boost contribution tiers in THB (subscription notice, Nov 2026). */
 export const TIERS: readonly Tier[] = [
   { id: 1, personal: 3_500, match: 3_500 },
   { id: 2, personal: 7_000, match: 7_000 },

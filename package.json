@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "EssilorLuxottica Boost employee share program investment simulator",
+  "description": "MyBoot Simulator 2026 - employee share program investment simulator",
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",

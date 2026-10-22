@@ -1,6 +1,6 @@
-npm run devnpm run dev# Boost Investment Simulator — Implementation Plan
+# MyBoot Simulator 2026 — Implementation Plan
 
-A static web app that simulates the EssilorLuxottica **Boost** employee share program: what you put in, what the company matches, the tax on the company match, dividends, and your profit or loss when you sell. It's styled like Apple (glassy, minimal, light and dark themes) and deployed to **GitHub Pages**.
+A static web app that simulates the **Boost** employee share program: what you put in, what the company matches, the tax on the company match, dividends, and your profit or loss when you sell. It's styled like Apple (glassy, minimal, light and dark themes) and deployed to **GitHub Pages**.
 
 ---
 
@@ -17,7 +17,7 @@ A static web app that simulates the EssilorLuxottica **Boost** employee share pr
 | 7 | 140,000 | 70,000 | 210,000 | 50% |
 | 8 | 280,000 | 98,000 | 378,000 | 35% |
 
-- **Purchase:** the total amount is converted into EssilorLuxottica shares at the last purchase price set on **10 Nov 2026**. This is the default purchase date.
+- **Purchase:** the total amount is converted into company shares at the last purchase price set on **10 Nov 2026**. This is the default purchase date.
 - **Vesting / lock-up:** shares can't be sold until **3 years** after purchase.
 - **Eligibility rule (user-defined):** a tier is only available if its personal contribution is **≤ 25% of yearly salary**.
 - The PSP 25–28 matching cap is **out of scope**.
@@ -146,7 +146,7 @@ breakEvenSalePriceEUR      = (ownCashOut − divCash) / (finalShares × FXs)
 
 ## 6. UI / UX: Apple glassy minimal
 
-- **Layout:** one page. A sticky glass top bar has the title "Boost Simulator", the theme toggle, and the Print/PDF and Reset buttons. On desktop, the input panel is on the left and results on the right. On mobile, everything stacks into one column.
+- **Layout:** one page. A sticky glass top bar has the title "MyBoot Simulator 2026", the theme toggle, and the Print/PDF and Reset buttons. On desktop, the input panel is on the left and results on the right. On mobile, everything stacks into one column.
 - **Glass:** `backdrop-filter: blur(24px) saturate(180%)`, translucent white or black fills (`rgba(255,255,255,.55)` / `rgba(28,28,30,.55)`), a 1px light inner border, a soft large shadow and 20–24px corner radius.
 - **Background:** slowly drifting blurred colour shapes (blue, purple, teal) behind the glass. These are turned off when the user has `prefers-reduced-motion` set.
 - **Typography:** `-apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", system-ui`. Numbers use tabular figures.

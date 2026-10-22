@@ -1,6 +1,6 @@
-# Boost Simulator
+# MyBoot Simulator 2026
 
-An investment simulator for the EssilorLuxottica **Boost** employee share plan. Enter your salary, contribution tier, share prices and EUR/THB rates, then see how the company match, tax, dividends and your sale price add up to a profit or loss.
+An investment simulator for the **Boost** employee share plan. Enter your salary, contribution tier, share prices and EUR/THB rates, then see how the company match, tax, dividends and your sale price add up to a profit or loss.
 
 Built with Vite, TypeScript and Chart.js. It's a static site with no backend: all calculations run in the browser, and inputs are saved only in your browser's localStorage.
 
