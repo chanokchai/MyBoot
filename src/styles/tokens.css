@@ -1,0 +1,79 @@
+:root {
+  color-scheme: light;
+  --font: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Inter', 'Segoe UI', system-ui, sans-serif;
+  --radius-lg: 24px;
+  --radius-md: 16px;
+  --radius-sm: 12px;
+  --ease: cubic-bezier(0.32, 0.72, 0, 1);
+
+  --bg: #f5f5f7;
+  --surface-solid: #ffffff;
+  --glass: rgba(255, 255, 255, 0.62);
+  --glass-strong: rgba(255, 255, 255, 0.82);
+  --glass-border: rgba(255, 255, 255, 0.75);
+  --glass-highlight: rgba(255, 255, 255, 0.9);
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 12px 40px rgba(15, 23, 42, 0.08);
+  --hairline: rgba(60, 60, 67, 0.12);
+
+  --text: #1d1d1f;
+  --text-2: #6e6e73;
+  --text-3: #8e8e93;
+
+  --accent: #0071e3;
+  --accent-soft: rgba(0, 113, 227, 0.12);
+  --pos: #1e9e4a;
+  --neg: #e0352b;
+  --purple: #7d5bd9;
+  --orange: #e08600;
+
+  --field: rgba(118, 118, 128, 0.1);
+  --field-hover: rgba(118, 118, 128, 0.16);
+  --seg-active: #ffffff;
+  --seg-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 1px rgba(0, 0, 0, 0.04);
+
+  --chart-grid: rgba(60, 60, 67, 0.1);
+  --chart-grid-strong: rgba(60, 60, 67, 0.45);
+  --chart-neutral: #8e8e93;
+
+  --blob-1: #7ab8ff;
+  --blob-2: #c8a8ff;
+  --blob-3: #8ee8d6;
+  --blob-opacity: 0.55;
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #000000;
+  --surface-solid: #1c1c1e;
+  --glass: rgba(28, 28, 30, 0.58);
+  --glass-strong: rgba(44, 44, 46, 0.78);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-highlight: rgba(255, 255, 255, 0.06);
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 16px 48px rgba(0, 0, 0, 0.45);
+  --hairline: rgba(84, 84, 88, 0.45);
+
+  --text: #f5f5f7;
+  --text-2: #a1a1a6;
+  --text-3: #8e8e93;
+
+  --accent: #0a84ff;
+  --accent-soft: rgba(10, 132, 255, 0.2);
+  --pos: #30d158;
+  --neg: #ff453a;
+  --purple: #bf5af2;
+  --orange: #ff9f0a;
+
+  --field: rgba(118, 118, 128, 0.24);
+  --field-hover: rgba(118, 118, 128, 0.32);
+  --seg-active: #636366;
+  --seg-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+
+  --chart-grid: rgba(255, 255, 255, 0.08);
+  --chart-grid-strong: rgba(255, 255, 255, 0.4);
+  --chart-neutral: #8e8e93;
+
+  --blob-1: #0a4fa8;
+  --blob-2: #5b2a9e;
+  --blob-3: #0d6b5c;
+  --blob-opacity: 0.5;
+}

@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f5f5f7" />
+    <meta name="description" content="Simulate your EssilorLuxottica Boost employee share investment: company match, tax, dividends and profit when you sell." />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>Boost Simulator · EssilorLuxottica share plan</title>
+    <script>
+      // Apply the saved theme before first paint to avoid a flash.
+      (function () {
+        try {
+          var m = localStorage.getItem('boost-sim:theme');
+          var dark = m === 'dark' || (m !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches);
+          document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <div class="backdrop" aria-hidden="true">
+      <span class="blob blob-1"></span>
+      <span class="blob blob-2"></span>
+      <span class="blob blob-3"></span>
+    </div>
+
+    <header class="topbar glass">
+      <div class="brand">
+        <img src="/favicon.svg" alt="" width="34" height="34" />
+        <div>
+          <h1>Boost Simulator</h1>
+          <p>EssilorLuxottica employee share plan</p>
+        </div>
+      </div>
+      <div class="actions">
+        <div class="segmented segmented-sm" id="theme-toggle" role="radiogroup" aria-label="Theme">
+          <button type="button" role="radio" data-value="auto" title="Follow system">Auto</button>
+          <button type="button" role="radio" data-value="light" title="Light">Light</button>
+          <button type="button" role="radio" data-value="dark" title="Dark">Dark</button>
+        </div>
+        <button type="button" class="btn" id="btn-print">Export PDF</button>
+        <button type="button" class="btn btn-ghost" id="btn-reset">Reset</button>
+      </div>
+    </header>
+
+    <main class="layout">
+      <aside class="inputs glass" aria-label="Simulation inputs">
+        <form id="sim-form" novalidate>
+          <section class="group">
+            <h2><span class="step">1</span>Your profile</h2>
+            <label class="field">
+              <span class="label">Yearly salary</span>
+              <span class="input-wrap">
+                <input id="f-salary" data-field="salary" type="number" inputmode="decimal" min="0" step="1000" />
+                <span class="suffix">THB</span>
+              </span>
+              <span class="hint" id="salary-hint"></span>
+              <span class="error" data-error-for="salary"></span>
+            </label>
+
+            <div class="field">
+              <span class="label" id="tier-label">Contribution tier</span>
+              <div class="tier-grid" id="tier-grid" role="radiogroup" aria-labelledby="tier-label"></div>
+              <span class="error" data-error-for="tierId"></span>
+            </div>
+          </section>
+
+          <section class="group">
+            <h2><span class="step">2</span>Purchase</h2>
+            <label class="field">
+              <span class="label">Purchase date</span>
+              <span class="input-wrap"><input data-field="purchaseDate" type="date" /></span>
+              <span class="error" data-error-for="purchaseDate"></span>
+            </label>
+            <div class="row">
+              <label class="field">
+                <span class="label">Share price</span>
+                <span class="input-wrap">
+                  <input data-field="purchasePrice" type="number" inputmode="decimal" min="0" step="0.01" />
+                  <span class="suffix">EUR</span>
+                </span>
+                <span class="error" data-error-for="purchasePrice"></span>
+              </label>
+              <label class="field">
+                <span class="label">EUR/THB rate</span>
+                <span class="input-wrap">
+                  <input data-field="purchaseFx" type="number" inputmode="decimal" min="0" step="0.01" />
+                  <span class="suffix">฿/€</span>
+                </span>
+                <span class="error" data-error-for="purchaseFx"></span>
+              </label>
+            </div>
+          </section>
+
+          <section class="group">
+            <h2><span class="step">3</span>Tax on company match</h2>
+            <label class="field">
+              <span class="label">
+                Tax date
+                <button type="button" class="link" data-set-vesting="taxDate">Use vesting date</button>
+              </span>
+              <span class="input-wrap"><input data-field="taxDate" type="date" /></span>
+              <span class="hint">You’re taxed even if you keep holding the shares.</span>
+              <span class="error" data-error-for="taxDate"></span>
+            </label>
+            <div class="row">
+              <label class="field">
+                <span class="label">Share price on tax date</span>
+                <span class="input-wrap">
+                  <input data-field="taxPrice" type="number" inputmode="decimal" min="0" step="0.01" />
+                  <span class="suffix">EUR</span>
+                </span>
+                <span class="error" data-error-for="taxPrice"></span>
+              </label>
+              <label class="field">
+                <span class="label">EUR/THB rate</span>
+                <span class="input-wrap">
+                  <input data-field="taxFx" type="number" inputmode="decimal" min="0" step="0.01" />
+                  <span class="suffix">฿/€</span>
+                </span>
+                <span class="error" data-error-for="taxFx"></span>
+              </label>
+            </div>
+            <div class="field">
+              <span class="label">Tax rate on matched shares</span>
+              <div class="slider-row">
+                <input type="range" data-field="taxRate" min="0" max="99" step="1" aria-label="Tax rate slider" />
+                <span class="input-wrap input-narrow">
+                  <input data-field="taxRate" type="number" inputmode="numeric" min="0" max="99" step="1" maxlength="2" aria-label="Tax rate" />
+                  <span class="suffix">%</span>
+                </span>
+              </div>
+              <span class="error" data-error-for="taxRate"></span>
+            </div>
+            <div class="field">
+              <span class="label" id="taxmode-label">How the tax is paid</span>
+              <div class="segmented" data-field="taxMode" role="radiogroup" aria-labelledby="taxmode-label">
+                <button type="button" role="radio" data-value="cash">Pay in cash</button>
+                <button type="button" role="radio" data-value="sell">Sell shares to cover</button>
+              </div>
+            </div>
+          </section>
+
+          <section class="group">
+            <h2>
+              <span class="step">4</span>Dividends
+              <label class="switch" title="Include dividends">
+                <input type="checkbox" data-field="dividendsEnabled" aria-label="Include dividends" />
+                <span class="switch-track"><span class="switch-thumb"></span></span>
+              </label>
+            </h2>
+            <div id="dividend-fields">
+              <div class="row">
+                <label class="field">
+                  <span class="label">Dividend per share / year</span>
+                  <span class="input-wrap">
+                    <input data-field="dividendPerShare" type="number" inputmode="decimal" min="0" step="0.01" />
+                    <span class="suffix">EUR</span>
+                  </span>
+                  <span class="error" data-error-for="dividendPerShare"></span>
+                </label>
+                <label class="field">
+                  <span class="label">Average EUR/THB rate</span>
+                  <span class="input-wrap">
+                    <input data-field="dividendFx" type="number" inputmode="decimal" min="0" step="0.01" />
+                    <span class="suffix">฿/€</span>
+                  </span>
+                  <span class="error" data-error-for="dividendFx"></span>
+                </label>
+              </div>
+              <div class="field">
+                <span class="label" id="divmode-label">What to do with dividends</span>
+                <div class="segmented" data-field="dividendMode" role="radiogroup" aria-labelledby="divmode-label">
+                  <button type="button" role="radio" data-value="cash">Take as cash</button>
+                  <button type="button" role="radio" data-value="reinvest">Reinvest</button>
+                </div>
+                <span class="hint">Paid every purchase anniversary, plus a pro-rated part for the final partial year. Reinvested dividends buy shares at an estimated price between the known prices.</span>
+              </div>
+            </div>
+          </section>
+
+          <section class="group">
+            <h2><span class="step">5</span>Sale</h2>
+            <label class="field">
+              <span class="label">
+                Sale date
+                <button type="button" class="link" data-set-vesting="saleDate">Use vesting date</button>
+              </span>
+              <span class="input-wrap"><input data-field="saleDate" type="date" /></span>
+              <span class="hint" id="vesting-hint"></span>
+              <span class="error" data-error-for="saleDate"></span>
+            </label>
+            <div class="row">
+              <label class="field">
+                <span class="label">Sale price</span>
+                <span class="input-wrap">
+                  <input data-field="salePrice" type="number" inputmode="decimal" min="0" step="0.01" />
+                  <span class="suffix">EUR</span>
+                </span>
+                <span class="error" data-error-for="salePrice"></span>
+              </label>
+              <label class="field">
+                <span class="label">EUR/THB rate</span>
+                <span class="input-wrap">
+                  <input data-field="saleFx" type="number" inputmode="decimal" min="0" step="0.01" />
+                  <span class="suffix">฿/€</span>
+                </span>
+                <span class="error" data-error-for="saleFx"></span>
+              </label>
+            </div>
+          </section>
+          <p class="saved-note">Your inputs are saved in this browser only.</p>
+        </form>
+      </aside>
+
+      <section class="results" aria-live="polite">
+        <div class="alert glass" id="alert" role="alert" hidden></div>
+
+        <div id="results-body">
+          <section class="kpis" id="kpis"></section>
+
+          <article class="card glass">
+            <header class="card-head">
+              <div>
+                <h3>Timeline</h3>
+                <p>Key dates for your shares</p>
+              </div>
+            </header>
+            <div id="timeline" class="timeline"></div>
+          </article>
+
+          <article class="card glass">
+            <header class="card-head">
+              <div>
+                <h3>Where your result comes from</h3>
+                <p>From what you put in to what you take home, step by step</p>
+              </div>
+            </header>
+            <div class="chart-box"><canvas id="chart-waterfall" role="img" aria-label="Profit breakdown waterfall chart"></canvas></div>
+          </article>
+
+          <article class="card glass">
+            <header class="card-head">
+              <div>
+                <h3>Profit at different sale prices</h3>
+                <p id="sensitivity-sub">Where you break even, and how much you make or lose</p>
+              </div>
+            </header>
+            <div class="chart-box"><canvas id="chart-sensitivity" role="img" aria-label="Net profit by sale price chart"></canvas></div>
+          </article>
+
+          <article class="card glass">
+            <header class="card-head">
+              <div>
+                <h3>Profit &amp; loss report</h3>
+                <p>Every line of the calculation</p>
+              </div>
+            </header>
+            <div id="pnl" class="table-wrap"></div>
+          </article>
+
+          <article class="card glass">
+            <header class="card-head">
+              <div>
+                <h3>Compare all tiers</h3>
+                <p>Same prices and dates, different contribution levels. Click an available row to pick it.</p>
+              </div>
+            </header>
+            <div class="chart-box"><canvas id="chart-tiers" role="img" aria-label="Tier comparison chart"></canvas></div>
+            <div id="tier-table" class="table-wrap"></div>
+          </article>
+        </div>
+
+        <section class="print-only card" id="print-inputs"></section>
+
+        <p class="disclaimer">
+          For illustration only. This is not financial or tax advice. Results depend entirely on the prices, rates and tax
+          rate you enter. Check the official Boost plan rules and your local tax rules before you decide.
+        </p>
+      </section>
+    </main>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
