@@ -46,7 +46,7 @@ export function renderKpis(root: HTMLElement, { result: r, inputs, breakEven, be
       <div class="kpi glass" data-k="xirr"><span class="kpi-label">Yearly return (annualized)</span><span class="kpi-value" data-v></span><span class="kpi-sub" data-s></span></div>
       <div class="kpi glass" data-k="be"><span class="kpi-label">Break-even sale price</span><span class="kpi-value" data-v></span><span class="kpi-sub" data-s></span></div>
       <div class="kpi glass" data-k="shares"><span class="kpi-label">Shares when you sell</span><span class="kpi-value" data-v></span><span class="kpi-sub" data-s></span></div>
-      <div class="kpi glass" data-k="boost"><span class="kpi-label">Extra from Boost</span><span class="kpi-value" data-v></span><span class="kpi-sub" data-s></span></div>`;
+      <div class="kpi glass" data-k="boost"><span class="kpi-label">Extra from company match</span><span class="kpi-value" data-v></span><span class="kpi-sub" data-s></span></div>`;
     root.dataset.ready = '1';
   }
   const set = (key: string, value: number, fmt: (n: number) => string, sub: string, cls = '') => {
