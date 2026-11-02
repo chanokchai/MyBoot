@@ -1,7 +1,7 @@
 {
   "name": "boost-simulator",
   "private": true,
-  "version": "1.0.0",
+  "version": "0.2.0",
   "type": "module",
   "description": "MyBoot Simulator 2026 - employee share program investment simulator",
   "scripts": {
