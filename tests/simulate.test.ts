@@ -27,26 +27,27 @@ const base: SimInputs = {
 const sumBreakdown = (r: ReturnType<typeof simulate>) =>
   r.breakdown.contribution + r.breakdown.match + r.breakdown.price + r.breakdown.fx + r.breakdown.dividends + r.breakdown.tax;
 
-describe('simulate — worked example from PLAN.md', () => {
+describe('simulate — tier 6 (€2,000 + €1,000) at 38 ฿/€', () => {
   const r = simulate(base);
 
   it('buys the right number of shares', () => {
-    expect(r.total).toBe(105_000);
-    expect(r.sharesTotal).toBeCloseTo(9.2105, 4);
-    expect(r.sharesMatch).toBeCloseTo(3.0702, 4);
+    expect(r.personal).toBeCloseTo(76_000, 6);
+    expect(r.total).toBeCloseTo(114_000, 6);
+    expect(r.sharesTotal).toBeCloseTo(10, 9);
+    expect(r.sharesMatch).toBeCloseTo(3.3333, 4);
   });
 
   it('taxes the matching shares at the tax-date value', () => {
-    expect(r.taxableValueThb).toBeCloseTo(40_833.33, 2);
-    expect(r.tax).toBeCloseTo(8_166.67, 2);
-    expect(r.taxCash).toBeCloseTo(8_166.67, 2);
+    expect(r.taxableValueThb).toBeCloseTo(44_333.33, 2);
+    expect(r.tax).toBeCloseTo(8_866.67, 2);
+    expect(r.taxCash).toBeCloseTo(8_866.67, 2);
     expect(r.sharesSoldForTax).toBe(0);
   });
 
   it('computes proceeds, profit and return', () => {
-    expect(r.saleProceeds).toBeCloseTo(122_500, 6);
-    expect(r.ownCashOut).toBeCloseTo(78_166.67, 2);
-    expect(r.netProfit).toBeCloseTo(44_333.33, 2);
+    expect(r.saleProceeds).toBeCloseTo(133_000, 6);
+    expect(r.ownCashOut).toBeCloseTo(84_866.67, 2);
+    expect(r.netProfit).toBeCloseTo(48_133.33, 2);
     expect(r.returnOnOwnMoney).toBeCloseTo(0.5672, 4);
     expect(r.holdingYears).toBeCloseTo(3, 2);
   });
@@ -63,7 +64,7 @@ describe('simulate — tax modes', () => {
     expect(r.taxCash).toBe(0);
     expect(r.sharesSoldForTax * 350 * 38).toBeCloseTo(r.tax, 6);
     expect(r.finalShares).toBeCloseTo(r.sharesTotal - r.sharesSoldForTax, 9);
-    expect(r.ownCashOut).toBe(70_000);
+    expect(r.ownCashOut).toBeCloseTo(76_000, 6);
     // Same prices at tax and sale → same profit as paying cash.
     expect(r.netProfit).toBeCloseTo(simulate(base).netProfit, 6);
     expect(sumBreakdown(r)).toBeCloseTo(r.breakdown.finalValue, 6);
@@ -71,21 +72,21 @@ describe('simulate — tax modes', () => {
 
   it('tax still applies when holding past the tax date', () => {
     const r = simulate({ ...base, saleDate: '2032-01-01', salePrice: 400 });
-    expect(r.tax).toBeCloseTo(8_166.67, 2);
+    expect(r.tax).toBeCloseTo(8_866.67, 2);
   });
 
   it('zero tax rate means no tax', () => {
     const r = simulate({ ...base, taxRate: 0 });
     expect(r.tax).toBe(0);
-    expect(r.netProfit).toBeCloseTo(122_500 - 70_000, 6);
+    expect(r.netProfit).toBeCloseTo(133_000 - 76_000, 6);
   });
 });
 
 describe('simulate — all tiers', () => {
   it.each(TIERS.map((t) => [t.id, t]))('tier %i invests personal + match', (_id, tier) => {
     const r = simulate({ ...base, tierId: tier.id });
-    expect(r.total).toBe(tier.personal + tier.match);
-    expect(r.sharesTotal * 300 * 38).toBeCloseTo(r.total, 6);
+    expect(r.total).toBeCloseTo((tier.personalEur + tier.matchEur) * 38, 6);
+    expect(r.sharesTotal * 300).toBeCloseTo(tier.personalEur + tier.matchEur, 6);
     expect(sumBreakdown(r)).toBeCloseTo(r.breakdown.finalValue, 6);
   });
 });
@@ -142,9 +143,10 @@ describe('validate', () => {
   });
 
   it('enforces the 25% salary cap', () => {
-    expect(minSalaryForTier(TIERS[7])).toBe(1_120_000);
-    expect(isTierEligible(1_120_000, TIERS[7])).toBe(true);
-    expect(isTierEligible(1_119_999, TIERS[7])).toBe(false);
+    // €8,000 × 38 = ฿304,000 → needs ฿1,216,000 salary at 25%.
+    expect(minSalaryForTier(TIERS[7], 38)).toBeCloseTo(1_216_000, 6);
+    expect(isTierEligible(1_216_000, TIERS[7], 38)).toBe(true);
+    expect(isTierEligible(1_215_999, TIERS[7], 38)).toBe(false);
     const issues = validate({ ...base, salary: 200_000, tierId: 6 });
     expect(issues.map((i) => i.field)).toContain('tierId');
   });

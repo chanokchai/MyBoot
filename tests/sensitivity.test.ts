@@ -52,7 +52,7 @@ describe('sensitivityCurve', () => {
 
 describe('compareTiers', () => {
   it('flags tiers above the salary cap', () => {
-    const rows = compareTiers({ ...base, salary: 300_000 });
+    const rows = compareTiers({ ...base, salary: 304_000 });
     expect(rows.filter((r) => r.eligible).map((r) => r.tier.id)).toEqual([1, 2, 3, 4, 5, 6]);
   });
 
@@ -69,6 +69,6 @@ describe('withoutBoost', () => {
     const r = withoutBoost(base);
     expect(r.match).toBe(0);
     expect(r.tax).toBe(0);
-    expect(r.netProfit).toBeCloseTo(70_000 * (350 / 300) - 70_000, 6);
+    expect(r.netProfit).toBeCloseTo(76_000 * (350 / 300) - 76_000, 6);
   });
 });

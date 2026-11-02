@@ -1,4 +1,4 @@
-import { SALARY_CAP_PCT, TIERS, VESTING_YEARS } from '../config';
+import { SALARY_CAP_PCT, TIERS, VESTING_YEARS, tierThb } from '../config';
 import { addYearsIso } from '../calc/dates';
 import type { SimInputs } from '../calc/types';
 import { isTierEligible, maxPersonalContribution, minSalaryForTier, type ValidationIssue } from '../calc/validate';
@@ -19,13 +19,14 @@ export function createForm(store: Store) {
   const form = $<HTMLFormElement>('#sim-form')!;
   const tierGrid = $<HTMLDivElement>('#tier-grid')!;
 
+  // Amounts are filled in by sync() since they depend on the purchase EUR/THB rate.
   tierGrid.innerHTML = TIERS.map(
     (t) => `
     <button type="button" role="radio" class="tier" data-tier="${t.id}">
-      <span class="tier-top"><span class="tier-name">Tier ${t.id}</span><span class="badge">${matchLabel(t.personal, t.match)}</span></span>
-      <span class="tier-line"><span>You</span><b>${num(t.personal)}</b></span>
-      <span class="tier-line"><span>Company</span><b>+${num(t.match)}</b></span>
-      <span class="tier-total"><span>Total</span><b>฿${num(t.personal + t.match)}</b></span>
+      <span class="tier-top"><span class="tier-name">Tier ${t.id}</span><span class="badge">${matchLabel(t.personalEur, t.matchEur)}</span></span>
+      <span class="tier-line"><span>You</span><b data-amt="personal"></b></span>
+      <span class="tier-line"><span>Company</span><b data-amt="match"></b></span>
+      <span class="tier-total"><span>Total</span><b data-amt="total"></b></span>
       <span class="tier-lock"></span>
     </button>`,
   ).join('');
@@ -135,9 +136,16 @@ export function createForm(store: Store) {
     $<HTMLSpanElement>('#salary-hint')!.textContent =
       cap > 0 ? `You can put in up to ${thb(cap)} a year (${SALARY_CAP_PCT}% of salary).` : `Contributions are capped at ${SALARY_CAP_PCT}% of salary.`;
 
+    const fx = s.purchaseFx;
+    const fxOk = Number.isFinite(fx) && fx > 0;
     $$<HTMLButtonElement>('button[data-tier]', tierGrid).forEach((btn) => {
       const tier = TIERS.find((t) => t.id === Number(btn.dataset.tier))!;
-      const eligible = isTierEligible(s.salary, tier);
+      const amt = tierThb(tier, fx);
+      const set = (key: string, text: string) => (btn.querySelector(`[data-amt="${key}"]`)!.textContent = fxOk ? text : '—');
+      set('personal', num(Math.round(amt.personal)));
+      set('match', `+${num(Math.round(amt.match))}`);
+      set('total', `฿${num(Math.round(amt.personal + amt.match))}`);
+      const eligible = !fxOk || isTierEligible(s.salary, tier, fx);
       const active = tier.id === s.tierId;
       btn.classList.toggle('is-active', active);
       btn.classList.toggle('is-disabled', !eligible);
@@ -145,7 +153,7 @@ export function createForm(store: Store) {
       btn.setAttribute('aria-disabled', String(!eligible));
       btn.tabIndex = active ? 0 : -1;
       const lock = btn.querySelector('.tier-lock')!;
-      lock.textContent = eligible ? '' : `Needs salary ≥ ${thb(Math.ceil(minSalaryForTier(tier)))}`;
+      lock.textContent = eligible ? '' : `Needs salary ≥ ${thb(Math.ceil(minSalaryForTier(tier, fx)))}`;
       btn.title = eligible ? '' : lock.textContent;
     });
 

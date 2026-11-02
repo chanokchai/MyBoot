@@ -1,20 +1,25 @@
 export interface Tier {
   id: number;
-  personal: number;
-  match: number;
+  personalEur: number;
+  matchEur: number;
 }
 
-/** Boost contribution tiers in THB (subscription notice, Nov 2026). */
+/** Boost contribution tiers in EUR (subscription notice, Nov 2026). */
 export const TIERS: readonly Tier[] = [
-  { id: 1, personal: 3_500, match: 3_500 },
-  { id: 2, personal: 7_000, match: 7_000 },
-  { id: 3, personal: 14_000, match: 14_000 },
-  { id: 4, personal: 21_000, match: 21_000 },
-  { id: 5, personal: 28_000, match: 28_000 },
-  { id: 6, personal: 70_000, match: 35_000 },
-  { id: 7, personal: 140_000, match: 70_000 },
-  { id: 8, personal: 280_000, match: 98_000 },
+  { id: 1, personalEur: 100, matchEur: 100 },
+  { id: 2, personalEur: 200, matchEur: 200 },
+  { id: 3, personalEur: 400, matchEur: 400 },
+  { id: 4, personalEur: 600, matchEur: 600 },
+  { id: 5, personalEur: 800, matchEur: 800 },
+  { id: 6, personalEur: 2_000, matchEur: 1_000 },
+  { id: 7, personalEur: 4_000, matchEur: 2_000 },
+  { id: 8, personalEur: 8_000, matchEur: 2_800 },
 ];
+
+/** Tier amounts in THB at the given EUR/THB rate (use the purchase-date rate). */
+export function tierThb(tier: Tier, fx: number): { personal: number; match: number } {
+  return { personal: tier.personalEur * fx, match: tier.matchEur * fx };
+}
 
 /** Personal contribution may not exceed this % of yearly salary. */
 export const SALARY_CAP_PCT = 25;

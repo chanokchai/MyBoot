@@ -1,4 +1,4 @@
-import { VESTING_YEARS, getTier } from '../config';
+import { VESTING_YEARS, getTier, tierThb } from '../config';
 import { addYears, parseDate, yearsBetween } from './dates';
 import { dividendSchedule, interpolatePrice } from './dividends';
 import type { DividendEvent, SimInputs, SimOverrides, SimResult } from './types';
@@ -14,7 +14,7 @@ function requireDate(iso: string, label: string): Date {
 
 /** Runs the Boost simulation. Inputs must already pass `validate()`. */
 export function simulate(inputs: SimInputs, overrides: SimOverrides = {}): SimResult {
-  const tier = getTier(inputs.tierId);
+  const tier = tierThb(getTier(inputs.tierId), inputs.purchaseFx);
   const personal = overrides.personal ?? tier.personal;
   const match = overrides.match ?? tier.match;
   const total = personal + match;

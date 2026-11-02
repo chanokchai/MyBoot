@@ -13,13 +13,14 @@ export function maxPersonalContribution(salary: number): number {
   return Number.isFinite(salary) && salary > 0 ? (salary * SALARY_CAP_PCT) / 100 : 0;
 }
 
-export function isTierEligible(salary: number, tier: Tier): boolean {
-  return tier.personal <= maxPersonalContribution(salary) + 1e-9;
+/** `fx` is THB per EUR on the purchase date. */
+export function isTierEligible(salary: number, tier: Tier, fx: number): boolean {
+  return tier.personalEur * fx <= maxPersonalContribution(salary) + 1e-9;
 }
 
-/** Minimum yearly salary needed to pick a tier. */
-export function minSalaryForTier(tier: Tier): number {
-  return (tier.personal * 100) / SALARY_CAP_PCT;
+/** Minimum yearly salary (THB) needed to pick a tier. */
+export function minSalaryForTier(tier: Tier, fx: number): number {
+  return (tier.personalEur * fx * 100) / SALARY_CAP_PCT;
 }
 
 const positive = (v: number) => Number.isFinite(v) && v > 0;
@@ -32,8 +33,8 @@ export function validate(inputs: SimInputs): ValidationIssue[] {
 
   const tier = TIERS.find((t) => t.id === inputs.tierId);
   if (!tier) add('tierId', 'Choose a contribution tier.');
-  else if (positive(inputs.salary) && !isTierEligible(inputs.salary, tier)) {
-    add('tierId', `Tier ${tier.id} needs a yearly salary of at least ${Math.ceil(minSalaryForTier(tier)).toLocaleString('en-US')} THB (${SALARY_CAP_PCT}% cap).`);
+  else if (positive(inputs.salary) && positive(inputs.purchaseFx) && !isTierEligible(inputs.salary, tier, inputs.purchaseFx)) {
+    add('tierId', `Tier ${tier.id} needs a yearly salary of at least ${Math.ceil(minSalaryForTier(tier, inputs.purchaseFx)).toLocaleString('en-US')} THB (${SALARY_CAP_PCT}% cap).`);
   }
 
   for (const [field, label] of [

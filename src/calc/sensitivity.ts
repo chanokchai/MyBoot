@@ -1,4 +1,4 @@
-import { TIERS, type Tier } from '../config';
+import { TIERS, tierThb, type Tier } from '../config';
 import { simulate } from './simulate';
 import type { SimInputs, SimResult } from './types';
 import { isTierEligible } from './validate';
@@ -55,8 +55,8 @@ export interface TierComparison {
 export function compareTiers(inputs: SimInputs): TierComparison[] {
   return TIERS.map((tier) => ({
     tier,
-    eligible: isTierEligible(inputs.salary, tier),
-    result: simulate(inputs, { personal: tier.personal, match: tier.match }),
+    eligible: isTierEligible(inputs.salary, tier, inputs.purchaseFx),
+    result: simulate(inputs, tierThb(tier, inputs.purchaseFx)),
   }));
 }
 
