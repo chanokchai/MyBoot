@@ -9,7 +9,7 @@ export function defaultInputs(): SimInputs {
     tierId: 5,
     purchaseDate: DEFAULT_PURCHASE_DATE,
     purchasePrice: 300,
-    purchaseFx: 38,
+    purchaseFx: 35,
     taxDate: vesting,
     taxPrice: 330,
     taxFx: 38,
